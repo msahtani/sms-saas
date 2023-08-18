@@ -26,10 +26,13 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig{
 
-    private static final String FRONT_HOST = "localhost:4200";
+    private static final String FRONT_HOST = "http://localhost:4200";
 
     private final AuthenticationProvider authProvider;
     private final JwtAuthFilter jwtAuthFilter;
+
+    private static final List<String> authorizedEndpoints =
+            List.of("/auth/**", "/app-gw/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -41,13 +44,14 @@ public class SecurityConfig{
                         cors -> cors.configurationSource(corsConfigSource())
                 )
                 .authorizeHttpRequests(
-                        auths -> auths
-                                .requestMatchers(
-                                        new AntPathRequestMatcher("/auth/**")
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                    auths -> auths
+                        .requestMatchers(
+                            authorizedEndpoints
+                                .stream()
+                                .map(AntPathRequestMatcher::new)
+                                .toArray(RequestMatcher[]::new)
+                        ).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(STATELESS)
@@ -64,6 +68,7 @@ public class SecurityConfig{
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTION"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
 
         final var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
