@@ -1,0 +1,46 @@
+version: '3.0'
+services:
+    account:
+        build: account
+        container_name: "account-service"
+        depends_on:
+            - db
+            - eureka
+        environment:
+            DB_HOST: db
+            DB_PASS: ${PASS}
+            EUREKA_URI: http://eureka:8761/eureka
+        volumes:
+            - mvn:/root/.m2
+    auth:
+        build: auth
+        container_name: "auth-service"
+        expose:
+            - 8001
+        depends_on:
+            - db
+            - eureka
+        environment:
+            DB_HOST: db
+            DB_PASS: ${PASS}
+            EUREKA_URI: http://eureka:8761/eureka
+        volumes:
+            -  mvn:/root/.m2
+    eureka:
+        build: discovery-server
+        container_name: "eureka-server"
+        expose:
+          - 8761
+        ports:
+            - '8761:8761'
+    db:
+        image: mysql
+        container_name: "mysql-db"
+        environment:
+            MYSQL_DATABASE: sms-saas-db
+            MYSQL_ROOT_PASSWORD: ${PASS}
+        volumes:
+            - mysql:/var/lib/mysql
+volumes:
+    mysql:
+    mvn:

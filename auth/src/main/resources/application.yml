@@ -1,0 +1,30 @@
+spring:
+    application:
+        name: auth-service
+
+    datasource:
+        url: jdbc:mysql://${DB_HOST:localhost:3306}/${DB_NAME:sms-saas-db}
+        username: root
+        password: ${DB_PASSWORD:12345678}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    jpa:
+        database-platform: org.hibernate.dialect.MySQLDialect
+        hibernate:
+            ddl-auto: update
+        database: mysql
+        open-in-view: false
+
+jwt:
+    duration: 30
+    secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
+
+server:
+    port: 0
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    instance:
+        preferIpAddress: true
