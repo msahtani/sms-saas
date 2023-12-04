@@ -17,7 +17,7 @@ import static ma.ensa.smsapi.account.utils.Generator.generateRandom;
 @RequiredArgsConstructor
 public class AccountService {
 
-    private final UserRepository userRepository;
+
     private final AccountRepository accountRepository;
 
 
@@ -32,7 +32,7 @@ public class AccountService {
                     }
                 })
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new RuntimeException("something went wrong #1001"));
     }
 
     public Account createAccount(User user){
@@ -53,11 +53,7 @@ public class AccountService {
             throw new RuntimeException("..........");
         }
 
-        /*
-        if(account.getUser().getId() != 0){
-            throw new RuntimeException("...............");
-        }
-        */
+
 
         var newAuthToken = generateRandom(36);
 
@@ -68,5 +64,21 @@ public class AccountService {
     }
 
 
+    public Account checkAuthApi(Account api) {
 
+        // TODO: create a custom exception
+        var account = accountRepository
+                .findById(api.getAccountSid())
+                .orElseThrow(RuntimeException::new);
+
+        boolean authTokenMatches = // true or false
+                account.getAuthToken().equals(api.getAuthToken());
+
+        // TODO: create another custom exception
+        if(!authTokenMatches){
+            throw new RuntimeException("auth token does not matches");
+        }
+
+        return account;
+    }
 }

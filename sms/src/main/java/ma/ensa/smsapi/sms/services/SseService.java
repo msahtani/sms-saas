@@ -13,9 +13,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class SseService {
-
     private final Map<String, SseEmitter> sses = new HashMap<>();
-
     private SseEmitter createSSE(
             final String address,
             final int port

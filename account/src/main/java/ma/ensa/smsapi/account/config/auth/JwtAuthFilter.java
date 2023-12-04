@@ -1,6 +1,7 @@
 package ma.ensa.smsapi.account.config.auth;
 
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -77,8 +79,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             .buildDetails(request)
             );
 
+
             // set the authentication into the `SecurityContextHolder`
             log.info("username: {}", username);
+
             SecurityContextHolder
                     .getContext()
                     .setAuthentication(authToken);

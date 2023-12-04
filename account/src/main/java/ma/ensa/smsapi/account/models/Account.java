@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 import static ma.ensa.smsapi.account.utils.Generator.generateRandom;
@@ -19,7 +21,7 @@ import static ma.ensa.smsapi.account.utils.Generator.generateRandom;
 @Builder
 
 @Entity
-public class Account {
+public class Account{
 
     @Id
     private String accountSid;
@@ -47,4 +49,5 @@ public class Account {
     public boolean isDisabled() {
         return !enabled;
     }
+
 }

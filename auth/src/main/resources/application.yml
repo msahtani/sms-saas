@@ -20,7 +20,7 @@ jwt:
     secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
 
 server:
-    port: 0
+    port: 8082
 
 eureka:
     client:

@@ -1,22 +1,11 @@
 version: '3.0'
 services:
-    account:
-        build: account
-        container_name: "account-service"
-        depends_on:
-            - db
-            - eureka
-        environment:
-            DB_HOST: db
-            DB_PASS: ${PASS}
-            EUREKA_URI: http://eureka:8761/eureka
-        volumes:
-            - mvn:/root/.m2
+    
     auth:
         build: auth
         container_name: "auth-service"
         expose:
-            - 8001
+            - 8000
         depends_on:
             - db
             - eureka

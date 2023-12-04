@@ -1,15 +1,21 @@
 package ma.ensa.smsapi.sms.services;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.smsapi.sms.dto.Auth;
 import ma.ensa.smsapi.sms.dto.SMS;
 import ma.ensa.smsapi.sms.dto.SmsApi;
 import ma.ensa.smsapi.sms.models.Account;
 import ma.ensa.smsapi.sms.models.SentSMS;
-import ma.ensa.smsapi.sms.repositories.AccountRepository;
 import ma.ensa.smsapi.sms.repositories.SmsRepository;
+
 import org.springframework.beans.BeanUtils;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -19,24 +25,33 @@ public class ApiService {
 
     private final SseService sseService;
 
-    private final AccountRepository accountRepository;
-
     private final SmsRepository smsRepository;
+
+    private final LoadBalancerClient loadBalancerClient;
+
+    private RestTemplate restTemplate;
+
+    @PostConstruct
+    public void init(){
+        restTemplate = new RestTemplate();
+    }
 
     private Account getAccount(Auth auth){
 
-        var account = accountRepository
-                .findById(auth.getAuthToken())
-                .orElseThrow(
-                        () -> new RuntimeException("ACCOUNT NOT FOUND")
-                );
+        HttpEntity<Auth> entity = new HttpEntity<>(auth);
 
-        // TODO: add new features (prev auth, ... )
-        if(auth.getAuthToken().equals(account.getAuthToken())){
-            throw new RuntimeException("AUTH IS INCORRECT");
+        var response = restTemplate.exchange(
+                getAccountServiceUri() + "/account/check",
+                HttpMethod.GET,
+                entity,
+                Account.class
+        );
+
+        if(response.getStatusCode() != HttpStatus.OK){
+            throw new RuntimeException("an error was occurred");
         }
 
-        return account;
+        return response.getBody();
 
     }
 
@@ -57,5 +72,12 @@ public class ApiService {
         registerSentSMS(account, sms);
     }
 
+    private String getAccountServiceUri(){
+
+        return loadBalancerClient
+                .choose("account-service")
+                .getUri().toString();
+
+    }
 
 }

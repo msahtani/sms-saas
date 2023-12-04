@@ -32,7 +32,7 @@ public class SecurityConfig{
     private final JwtAuthFilter jwtAuthFilter;
 
     private static final List<String> authorizedEndpoints =
-            List.of("/auth/**", "/app-gw/**", "/api/**");
+            List.of("/account/check");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

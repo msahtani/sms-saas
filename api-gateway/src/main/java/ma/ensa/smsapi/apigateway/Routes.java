@@ -28,10 +28,13 @@ public class Routes implements RouteLocator {
         return builder.routes()
                 .route(
                         "auth",
-                        predicate("/auth", "http://localhost:8084/auth")
+                        predicate("/auth/**", "lb://auth-service/auth")
                 ).route(
                         "account",
-                        predicate("/account", "http://localhost:8082/account")
+                        predicate("/account/**", "lb://account-service/account")
+                ).route(
+                        "sms",
+                        predicate("/sms/**", "lb://sms-service")
                 )
                 .build().getRoutes();
     }

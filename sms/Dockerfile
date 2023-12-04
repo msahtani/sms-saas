@@ -1,7 +1,12 @@
 FROM eclipse-temurin
 
-ARG JAR_FILE=target/*.jar
+WORKDIR app
 
-COPY ${JAR_FILE} app.jar
+# copy the source files
+COPY .mvn ./.mvn
+COPY mvnw ./mvnw
+COPY pom.xml ./pom.xml
+COPY src ./src
 
-CMD ["java", "-jar", "/app.jar"]
+# ./mvnw spring-boot:run
+CMD ["./mvnw", "spring-boot:run"]

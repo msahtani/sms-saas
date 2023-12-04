@@ -22,5 +22,4 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return ex.getMessage();
     }
 
-
 }
